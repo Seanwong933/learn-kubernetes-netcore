@@ -1,0 +1,41 @@
+# 这个文件的作用是让你明确各个matcher到底match的是什么东西
+---
+
+kind: Deployment   # 组件类型
+apiVersion: apps/v1
+metadata:
+  name: dep-meta-name # 整个deploy组件的名称，会作为部署名以及容器组跟副本集的前缀。
+  namespace: netcore-test  # 可指定，不指定时使用默认命名空间
+  labels:
+    name: dep-label-name
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: dep-spec-tpl-name-api # 这个是matcher，match 下面的 template
+  template:
+    metadata:
+      labels:
+        name: dep-spec-tpl-name-api # 容器组名称
+    spec:
+      containers:
+        - name: dep-spec-tpl-spec-name  # 容器名称，这个名字好像暂时不太重要
+          image: siegrainwong/k8s-demo  # docker hub 中的镜像名称
+          ports: 
+          - containerPort: 80
+          imagePullPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-meta-name # 服务名称
+  namespace: netcore-test
+spec: 
+  type: NodePort
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector:
+    name: dep-spec-tpl-name-api # match 上面的容器组

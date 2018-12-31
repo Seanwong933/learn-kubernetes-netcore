@@ -1,0 +1,43 @@
+# 这个文件的作用是让你明确各个matcher到底match的是什么东西
+# 在metadata下的name就是名称，但是labels就不一样了，labels实际上起标签的作用，是在给这个叫xxx的容器打标签
+---
+
+kind: Deployment   # 组件类型
+apiVersion: apps/v1
+metadata:
+  name: fucking # 整个deploy组件的名称，会作为部署名以及容器组跟副本集的前缀。
+  namespace: netcore-test-selector  # 可指定，不指定时使用默认命名空间
+  labels:
+    name: dep-label-name  # 组件标签
+spec:
+  replicas: 2
+  selector:
+    matchExpressions: # 这个是集合match表达式
+      - {key: shit, operator: In, values: [shit-label1]}
+  template:
+    metadata:
+      labels:
+        fuck: this-is-a-fucking-label # 容器组标签
+        shit: shit-label1
+    spec:
+      containers:
+        - name: dep-spec-tpl-spec-name  # 容器名称，这个名字好像暂时不太重要
+          image: siegrainwong/k8s-demo  # docker hub 中的镜像名称
+          ports: 
+          - containerPort: 80
+          imagePullPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: single-equal-match
+  namespace: netcore-test-selector
+spec: 
+  type: NodePort
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector: # 我在这里试了半天，才发现matchExpression是不允许用在Service上的，只能用在Deployment、Job、Replica Set、Daemon Set上。
+    shit: shit-label1
