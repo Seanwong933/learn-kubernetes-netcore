@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using k8s_demo.Services;
 
 namespace k8s_demo.Controllers
 {
@@ -10,11 +11,10 @@ namespace k8s_demo.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        private readonly INameService _nameService;
+        public ValuesController(INameService nameService)
         {
-            return new string[] { "value1", "value2" };
+            _nameService = nameService;
         }
 
         // GET api/values/5
@@ -22,6 +22,12 @@ namespace k8s_demo.Controllers
         public ActionResult<string> Get(int id)
         {
             return $"你输入的是：{id}";
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<string>> Get()
+        {
+            return $"hello, {await _nameService.GetName()}";
         }
 
         // POST api/values
