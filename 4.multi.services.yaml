@@ -1,0 +1,41 @@
+# 第8节教学：多Service内部交互访问示例 
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: name-service
+  namespace: netcore
+spec: 
+  type: NodePort
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector:
+    name: name-api
+
+---
+
+kind: Deployment   # 组件类型
+apiVersion: apps/v1
+metadata:
+  name: name-api # 整个deploy组件的名称，会作为部署名以及容器组跟副本集的前缀。
+  namespace: netcore  # 可指定，不指定时使用默认命名空间
+  labels:
+    name: dep-label-name  # 组件标签
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: name-api
+  template:
+    metadata:
+      labels:
+        name: name-api
+    spec:
+      containers:
+        - name: netcore-name-api
+          image: siegrainwong/name-api:latest
+          ports: 
+          - containerPort: 80
+          imagePullPolicy: Always

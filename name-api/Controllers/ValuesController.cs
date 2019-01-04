@@ -14,8 +14,17 @@ namespace name_api.Controllers
         [HttpGet]
         public ActionResult<string> Get()
         {
-            var host = Environment.GetEnvironmentVariable("NAME_API_SERVICE_HOST");
+            // https://kubernetes.io/docs/concepts/services-networking/service/
+            // 可以通过这种环境变量拿到当前 Service 的主机名
+            // {SVCNAME}_SERVICE_HOST
+            var host = Environment.GetEnvironmentVariable("NAME_SERVICE_SERVICE_HOST");
             return string.IsNullOrEmpty(host) ? "empty host" : host;
+        }
+
+        [HttpGet("{number}")]
+        public ActionResult<string> Get(int number) 
+        {
+            return $"fuck {number}";
         }
     }
 }

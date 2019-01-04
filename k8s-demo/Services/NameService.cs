@@ -7,10 +7,17 @@ namespace k8s_demo.Services
 {
     public class NameService : INameService
     {
-        private readonly string _nameUrl = "http://name-api/api/name";
+        private readonly string _nameUrl = "http://name-service/api/name";
         public async Task<string> GetName()
         {
-            return await _nameUrl.GetStringAsync();
+            try
+            {
+                return await _nameUrl.GetStringAsync();
+            }
+            catch (FlurlHttpException) 
+            {
+                return "Invalid Url";
+            }
         }
     }
 }

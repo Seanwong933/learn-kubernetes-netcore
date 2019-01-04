@@ -5,7 +5,7 @@ kind: Deployment   # 组件类型
 apiVersion: apps/v1
 metadata:
   name: dep-meta-name # 整个deploy组件的名称，会作为部署名以及容器组跟副本集的前缀。
-  namespace: netcore-test  # 可指定，不指定时使用默认命名空间
+  namespace: netcore  # 可指定，不指定时使用默认命名空间
   labels:
     name: dep-label-name
 spec:
@@ -31,7 +31,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: svc-meta-name # 服务名称
-  namespace: netcore-test
+  namespace: netcore
 spec: 
   type: NodePort
   ports: 
