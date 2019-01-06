@@ -8,7 +8,7 @@ namespace name_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NameController : ControllerBase
+    public class HostController : ControllerBase
     {
         // GET api/values
         [HttpGet]
@@ -19,12 +19,6 @@ namespace name_api.Controllers
             // {SVCNAME}_SERVICE_HOST
             var host = Environment.GetEnvironmentVariable("NAME_SERVICE_SERVICE_HOST");
             return string.IsNullOrEmpty(host) ? "empty host" : host;
-        }
-
-        [HttpGet("{number}")]
-        public ActionResult<string> Get(int number) 
-        {
-            return $"fuck {number}";
         }
     }
 }

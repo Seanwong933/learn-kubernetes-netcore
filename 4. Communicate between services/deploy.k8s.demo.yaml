@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: k8s-demo-api
-          image: siegrainwong/k8s-demo
+          image: siegrainwong/k8s-demo:1.1
           ports: 
           - containerPort: 80
           imagePullPolicy: Always

@@ -21,7 +21,11 @@ spec:
     spec:
       containers:
         - name: netcore-name-api
-          image: siegrainwong/name-api:latest
+          env: 
+            - name: POD_NAME_CURRENT
+              valueFrom:
+                  fieldRef: {fieldPath: metadata.name} # 获取当前的Pod实例名
+          image: siegrainwong/name-api:1.1
           ports: 
           - containerPort: 80
           imagePullPolicy: Always
