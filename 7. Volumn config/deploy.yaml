@@ -1,0 +1,72 @@
+# ConfigMap使用示例 - 挂载appsetting.json文件到configMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appsettings.name-api
+  namespace: netcore
+data:
+  appsettings.json: | # 这里是 key
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Trace"
+        }
+      },
+      "AllowedHosts": "*"
+    }
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: name-deployment
+  namespace: netcore
+  labels:
+    name: name-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: name-api
+  template:
+    metadata:
+      labels:
+        name: name-api
+    spec:
+      containers:
+        - name: netcore-name-api
+          env: 
+            - name: POD_NAME_CURRENT
+              valueFrom:
+                  fieldRef: {fieldPath: metadata.name}
+          # 挂载
+          volumeMounts:
+          - name: appsettings
+            mountPath: /app/appsettings.json  # 这个路径来源于你Dockerfile的WORKDIR，你API的所有文件都是放在这个目录下的。
+            subPath: appsettings.json  # 对应上面的 Key
+          image: registry.cn-hangzhou.aliyuncs.com/siegrain/name-api:1.1
+          ports: 
+          - containerPort: 80
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: aliyunimagesecret
+      # 添加挂载
+      volumes:
+      - name: appsettings
+        configMap: 
+          name: appsettings.name-api
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: name-service
+  namespace: netcore
+spec: 
+  type: NodePort
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector:
+    name: name-api
